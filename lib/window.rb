@@ -101,7 +101,6 @@ end
 java_import javax.swing::UIManager
 java_import javax.swing::JFrame
 java_import javax.swing::BoxLayout
-
 UIManager.set_look_and_feel(
   UIManager.get_system_look_and_feel_class_name)
 class Window < JFrame
