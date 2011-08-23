@@ -34,7 +34,6 @@ class InputPanel < JPanel
     @loc, @sex, @button = "A", 1, button
     
     set_layout(layout = GroupLayout.new(self))
-    
     layout.set_horizontal_group(
       layout.create_parallel_group().
       add_group(layout.create_sequential_group().
@@ -99,8 +98,12 @@ end
 
 
 # # #
+java_import javax.swing::UIManager
 java_import javax.swing::JFrame
 java_import javax.swing::BoxLayout
+
+UIManager.set_look_and_feel(
+  UIManager.get_system_look_and_feel_class_name)
 class Window < JFrame
   def initialize
     super("身分證字號產生器")
