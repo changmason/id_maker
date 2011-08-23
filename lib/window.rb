@@ -6,7 +6,7 @@ java_import javax.swing::JComboBox
 java_import javax.swing::ButtonGroup
 java_import javax.swing::JRadioButton
 java_import javax.swing::JButton
-
+java_import javax.swing::GroupLayout
 class InputPanel < JPanel
   attr_reader :loc, :sex, :button
   
@@ -25,57 +25,99 @@ class InputPanel < JPanel
     button = JButton.new("產生")
     
     # add event handlers
-    cb.add_action_listener do |evt| 
-      @loc = evt.get_source.get_selected_item[/[A-Z]/]
-    end
+    cb.add_action_listener { |evt|
+      @loc = evt.get_source.get_selected_item[/[A-Z]/] }
     rb1.add_action_listener { @sex = 1 if rb1.selected? }
     rb2.add_action_listener { @sex = 2 if rb2.selected? }
     
     # assign attributes
     @loc, @sex, @button = "A", 1, button
-    add_components(l1, cb, l2, rb1, rb2, button)
+    
+    set_layout(layout = GroupLayout.new(self))
+    
+    layout.set_horizontal_group(
+      layout.create_parallel_group().
+      add_group(layout.create_sequential_group().
+        add_component(l1, 32, 32, 32).
+        add_component(cb, 120, 120, 120)).
+      add_group(layout.create_sequential_group().
+        add_component(l2, 32, 32, 32).
+        add_component(rb1, 48, 48, 48).
+        add_component(rb2, 48, 48, 48)).
+      add_group(layout.create_sequential_group().
+       add_component(button, 148, 148, 148)))
+        
+    layout.set_vertical_group(
+      layout.create_sequential_group().
+      add_group(layout.create_parallel_group().
+        add_component(l1, 28, 28, 28).
+        add_component(cb)).
+      add_group(layout.create_parallel_group().
+        add_component(l2, 28, 28, 28).
+        add_component(rb1).
+        add_component(rb2)).
+      add_group(layout.create_parallel_group().
+        add_component(button, 32, 32, 32)))
   end
   
-  def add_components(*args)
+  def add_comps(*args)
     args.each { |comp| add(comp) }
   end
   
   def enable
-    get_components.to_a.each do |c| c.set_enabled(true) end
+    get_components.to_a.each { |c| c.set_enabled(true) }
   end
   
   def disable
-    get_components.to_a.each do |c| c.set_enabled(false) end
+    get_components.to_a.each { |c| c.set_enabled(false) }
   end
 end
 
+
+# # #
+java_import java.awt::Font
+java_import java.awt::Insets
+java_import javax.swing::JTextArea
 class OutputPanel < JPanel
   def initialize
     super()
+    @textarea = JTextArea.new(6, 8)
+    @textarea.margin = Insets.new(5, 5, 5, 5)
+    @textarea.font = Font.new("Consolas", Font::PLAIN, 16)
+    @textarea.line_wrap = true
+    add(@textarea)    
+  end
+  
+  def clear
+    @textarea.set_text("")
+  end
+  
+  def append(string)
+    @textarea.append(string)
   end
 end
+
 
 # # #
 java_import javax.swing::JFrame
-
+java_import javax.swing::BoxLayout
 class Window < JFrame
-  attr_reader :input_panel, :output_panel
-  
   def initialize
     super("身分證字號產生器")
-    
-    @input_panel = InputPanel.new
-    @output_panel = OutputPanel.new
-    
-    @input_panel.disable
+    set_size(164, 260)
+    set_resizable(false)
+    set_layout(BoxLayout.new(get_content_pane, BoxLayout::Y_AXIS))
+    set_default_close_operation(EXIT_ON_CLOSE)
 
-    add(@input_panel)
-    add(@output_panel)
+    add(@input_panel = InputPanel.new)
+    add(@output_panel = OutputPanel.new)
     
-    self.set_size(160, 250)
-    self.set_location_relative_to(nil)
-    self.set_default_close_operation(EXIT_ON_CLOSE)
+    @input_panel.button.add_action_listener do
+      @input_panel.disable
+      @output_panel.clear
+      Worker.new(@input_panel, @output_panel).execute
+    end
+    
+    self.visible = true
   end
-  
 end
-
