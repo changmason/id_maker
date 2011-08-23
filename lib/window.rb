@@ -12,8 +12,8 @@ class InputPanel < JPanel
   
   def initialize
     super()
-    area_list = IdMaker::AREA.to_a.map{|x| "(#{x[0]})#{x[1]}"}
-    area_list.unshift("(A)天龍國")
+    area_list = IdMaker::AREA.to_a.map{|x| "(#{x[0]}) #{x[1]}"}
+    area_list.unshift("(A) 天龍國")
 
     # construct ui components
     l1 = JLabel.new("產地:")
@@ -38,19 +38,19 @@ class InputPanel < JPanel
       layout.create_parallel_group().
       add_group(layout.create_sequential_group().
         add_component(l1, 32, 32, 32).
-        add_component(cb, 120, 120, 120)).
+        add_component(cb, 100, 100, 100)).
       add_group(layout.create_sequential_group().
         add_component(l2, 32, 32, 32).
-        add_component(rb1, 48, 48, 48).
-        add_component(rb2, 48, 48, 48)).
+        add_component(rb1, 44, 44, 44).
+        add_component(rb2, 44, 44, 44)).
       add_group(layout.create_sequential_group().
-       add_component(button, 148, 148, 148)))
+       add_component(button, 128, 128, 128)))
         
     layout.set_vertical_group(
       layout.create_sequential_group().
       add_group(layout.create_parallel_group().
         add_component(l1, 28, 28, 28).
-        add_component(cb)).
+        add_component(cb, 26, 26, 26)).
       add_group(layout.create_parallel_group().
         add_component(l2, 28, 28, 28).
         add_component(rb1).
@@ -80,9 +80,9 @@ java_import javax.swing::JTextArea
 class OutputPanel < JPanel
   def initialize
     super()
-    @textarea = JTextArea.new(6, 8)
+    @textarea = JTextArea.new(6, 7)
     @textarea.margin = Insets.new(5, 5, 5, 5)
-    @textarea.font = Font.new("Consolas", Font::PLAIN, 16)
+    @textarea.font = Font.new("Arial", Font::BOLD, 18)
     @textarea.line_wrap = true
     add(@textarea)    
   end
@@ -107,7 +107,7 @@ UIManager.set_look_and_feel(
 class Window < JFrame
   def initialize
     super("身分證字號產生器")
-    set_size(164, 260)
+    set_size(160, 270)
     set_resizable(false)
     set_layout(BoxLayout.new(get_content_pane, BoxLayout::Y_AXIS))
     set_default_close_operation(EXIT_ON_CLOSE)
